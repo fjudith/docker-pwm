@@ -31,12 +31,10 @@ jobs:
       - docker logs pwm
       - docker exec pwm /bin/bash -c "curl -i http://localhost:8080"
     after_success: 
-      - if [[ $TRAVIS_PULL_REQUEST != "false" ]; then
-          echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin;
-          docker tag ${REPO}:${VERSION} ${REPO}:$TAG;
-          docker push ${REPO}:${TAG};
-          docker push ${REPO}:${VERSION};
-        fi
+      - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+      - docker tag ${REPO}:${VERSION} ${REPO}:$TAG
+      - docker push ${REPO}:${TAG}
+      - docker push ${REPO}:${VERSION}
   - stage: Build
     env:
       - BASE_IMAGE=alpine
@@ -49,9 +47,7 @@ jobs:
       - docker logs pwm-${BASE_IMAGE}
       - docker exec pwm-${BASE_IMAGE} /bin/bash -c "curl -i http://localhost:8080"
     after_success:
-      - if [[ $TRAVIS_PULL_REQUEST != "false" ]; then
-          echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin;
-          docker tag ${REPO}:${VERSION}-${BASE_IMAGE} ${REPO}:${ALPINE_TAG};
-          docker push ${REPO}:${ALPINE_TAG};
-          docker push ${REPO}:${VERSION}-${BASE_IMAGE};
-        fi
+      - echo "${DOCKER_PASS}" | docker login -u "${DOCKER_USER}" --password-stdin
+      - docker tag ${REPO}:${VERSION}-${BASE_IMAGE} ${REPO}:${ALPINE_TAG}
+      - docker push ${REPO}:${ALPINE_TAG}
+      - docker push ${REPO}:${VERSION}-${BASE_IMAGE}
